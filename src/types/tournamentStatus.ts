@@ -1,0 +1,6 @@
+export enum tournamentStatus {
+  COMPLETE = "COMPLETE",
+  IN_PROGRESS = "IN PROGRESS",
+  SCHEDULED = "SCHEDULED",
+  ABANDONED = "ABANDONED",
+}
