@@ -1,6 +1,5 @@
 export type participant = {
-  firstName: string;
-  lastName: string;
+  name: string;
   id: number;
   wins: number;
   losses: number;

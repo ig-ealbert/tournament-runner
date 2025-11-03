@@ -15,9 +15,17 @@ export class Tournament {
     status: tournamentStatus.SCHEDULED,
   };
 
-  addPlayer(player: participant) {
-    this.tournament.participants.push(player);
-    return player;
+  addPlayer(playerName: string) {
+    const playerInfo: participant = {
+      name: playerName,
+      id: this.tournament.participants.length + 1,
+      wins: 0,
+      losses: 0,
+      ties: 0,
+      opponents: [],
+    };
+    this.tournament.participants.push(playerInfo);
+    return playerInfo;
   }
 
   advanceToNextRound() {
