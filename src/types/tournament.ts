@@ -10,4 +10,5 @@ export type tournament = {
   currentRound: number;
   results: match[];
   status: tournamentStatus;
+  standings: participant[];
 };

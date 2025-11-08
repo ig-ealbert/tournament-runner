@@ -3,6 +3,7 @@ import { result } from "@/types/result";
 import { tournament } from "@/types/tournament";
 import { tournamentStatus } from "@/types/tournamentStatus";
 import { randomUUID } from "node:crypto";
+import { WIN_SCORE } from "./constants";
 
 export class Tournament {
   tournament: tournament = {
@@ -13,6 +14,7 @@ export class Tournament {
     currentRound: 0,
     results: [],
     status: tournamentStatus.SCHEDULED,
+    standings: [],
   };
 
   addPlayer(playerName: string) {
@@ -34,6 +36,15 @@ export class Tournament {
     } else {
       this.tournament.status = tournamentStatus.COMPLETE;
     }
+  }
+
+  calculatePlayerScore(player: participant) {
+    return player.wins * WIN_SCORE + player.ties;
+  }
+
+  calculateStandings() {
+    // TODO - sort participants by score
+    return this.tournament.standings;
   }
 
   getPlayers() {

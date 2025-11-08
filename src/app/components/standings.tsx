@@ -15,9 +15,9 @@ export default function Standings(props: standingsProps) {
           </tr>
         </thead>
         <tbody>
-          {props.players.map((player) => (
+          {props.standings.map((player, index) => (
             <tr key={`standingsRow${player.id}`}>
-              <td>DUNNO</td>
+              <td>{index}</td>
               <td>{player.name}</td>
               <td>{player.wins}</td>
               <td>{player.losses}</td>

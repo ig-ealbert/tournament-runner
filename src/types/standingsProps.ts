@@ -1,6 +1,6 @@
 import { participant } from "./participant";
 
 export type standingsProps = {
-  players: participant[];
+  standings: participant[];
   round: number;
 };
