@@ -25,23 +25,25 @@ export default function Home() {
   const [addPlayerValue, setAddPlayerValue] = useState<string>("");
 
   async function addPlayer() {
-    const body = {
-      playerName: addPlayerValue,
-    };
-
     try {
       const returnValue = await fetch("/api/players/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ playerName: addPlayerValue }),
       });
       const newPlayer = await returnValue.json();
       const newPlayerList = tournamentData.participants.slice();
       newPlayerList.push(newPlayer);
+      const newStandings = tournamentData.standings.slice();
+      newStandings.push(newPlayer);
 
-      setTournamentData({ ...tournamentData, participants: newPlayerList });
+      setTournamentData({
+        ...tournamentData,
+        participants: newPlayerList,
+        standings: newStandings,
+      });
     } catch (e) {
       console.log(`Unable to add player.  ${e}`);
     }

@@ -5,4 +5,5 @@ export type participant = {
   losses: number;
   ties: number;
   opponents: number[];
+  score: number;
 };

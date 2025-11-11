@@ -25,6 +25,7 @@ export class Tournament {
       losses: 0,
       ties: 0,
       opponents: [],
+      score: 0,
     };
     this.tournament.participants.push(playerInfo);
     return playerInfo;
@@ -43,7 +44,12 @@ export class Tournament {
   }
 
   calculateStandings() {
-    // TODO - sort participants by score
+    for (const player of this.tournament.participants) {
+      player.score = this.calculatePlayerScore(player);
+    }
+    this.tournament.standings = this.tournament.participants.sort(
+      (a, b) => a.score - b.score
+    );
     return this.tournament.standings;
   }
 
