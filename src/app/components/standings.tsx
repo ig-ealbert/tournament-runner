@@ -4,7 +4,7 @@ export default function Standings(props: standingsProps) {
   return (
     <div>
       <h3>Current round: {props.round}</h3>
-      <table>
+      <table className={"standings"}>
         <thead>
           <tr>
             <th>Ranking</th>

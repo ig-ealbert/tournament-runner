@@ -52,7 +52,7 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <h1>Tournament Runner</h1>
+        <h1>{tournamentData.name}</h1>
         <div id="addPlayerSection">
           <input
             id="newPlayerName"
