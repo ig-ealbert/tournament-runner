@@ -14,6 +14,7 @@ const emptyTournament = {
   rounds: 0,
   currentRound: 0,
   results: [],
+  standings: [],
   status: tournamentStatus.SCHEDULED,
 };
 
@@ -64,7 +65,7 @@ export default function Home() {
         </div>
         <div>
           <Standings
-            players={tournamentData.participants}
+            standings={tournamentData.participants}
             round={tournamentData.currentRound}
           />
         </div>
