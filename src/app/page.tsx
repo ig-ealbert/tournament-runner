@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Standings from "./components/standings";
+import Standings from "../components/standings";
 import styles from "./page.module.css";
 import { participant } from "@/types/participant"; // will likely need in the future
 import { tournament } from "@/types/tournament";

@@ -35,6 +35,6 @@ body {
   }
 }
 
-.standings td, th {
+table td, th {
   padding-right: 10px;
 }
