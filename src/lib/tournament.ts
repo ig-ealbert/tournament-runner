@@ -53,8 +53,32 @@ export class Tournament {
     return this.tournament.standings;
   }
 
+  getPlayerById(id: number) {
+    return this.tournament.participants.filter((player) => player.id === id)[0];
+  }
+
   getPlayers() {
     return this.tournament.participants;
+  }
+
+  givePlayerWin(id: number) {
+    const player = this.getPlayerById(id);
+    player.wins = player.wins + 1;
+    return player.wins;
+  }
+
+  givePlayerLoss(id: number) {
+    const player = this.getPlayerById(id);
+    player.losses = player.losses + 1;
+    return player.losses;
+  }
+
+  givePlayersTie(id1: number, id2: number) {
+    const player1 = this.getPlayerById(id1);
+    const player2 = this.getPlayerById(id2);
+    player1.ties = player1.ties + 1;
+    player2.ties = player2.ties + 1;
+    return true;
   }
 
   makePairings() {
@@ -65,15 +89,24 @@ export class Tournament {
   }
 
   reportResult(player1: number, player2: number, outcome: result) {
-    const result = {
+    if (outcome === result.WIN) {
+      this.givePlayerWin(player1);
+      this.givePlayerLoss(player2);
+    } else if (outcome === result.LOSS) {
+      this.givePlayerLoss(player1);
+      this.givePlayerWin(player2);
+    } else {
+      this.givePlayersTie(player1, player2);
+    }
+    const resultLog = {
       player1,
       player2,
       round: this.tournament.currentRound,
       result: outcome,
       tournamentId: this.tournament.id,
     };
-    this.tournament.results.push(result);
-    return result;
+    this.tournament.results.push(resultLog);
+    return outcome;
   }
 
   setName(name: string) {

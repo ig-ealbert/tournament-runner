@@ -6,6 +6,7 @@ import styles from "./page.module.css";
 import { participant } from "@/types/participant"; // will likely need in the future
 import { tournament } from "@/types/tournament";
 import { tournamentStatus } from "@/types/tournamentStatus";
+import Pairings from "@/components/pairings";
 
 const emptyTournament = {
   id: "New Tournament",
@@ -52,24 +53,37 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <h1>{tournamentData.name}</h1>
-        <div id="addPlayerSection">
+        <div className="topCenter">
           <input
-            id="newPlayerName"
-            placeholder="Enter Player Name"
-            value={addPlayerValue}
-            onChange={(e) => setAddPlayerValue(e.target.value)}
+            className="tournamentName"
+            value={tournamentData.name}
+            onChange={(event) =>
+              setTournamentData({ ...tournamentData, name: event.target.value })
+            }
           ></input>
-          <button onClick={addPlayer}>Add Player</button>
+          <div id="addPlayerSection">
+            <input
+              id="newPlayerName"
+              placeholder="Enter Player Name"
+              value={addPlayerValue}
+              onChange={(e) => setAddPlayerValue(e.target.value)}
+            ></input>
+            <button onClick={addPlayer}>Add Player</button>
+          </div>
+          <button>
+            Create Pairings (Round {tournamentData.currentRound + 1})
+          </button>
         </div>
-        <div>
-          <button>Report Result</button>
-        </div>
-        <div>
-          <Standings
-            standings={tournamentData.participants}
-            round={tournamentData.currentRound}
-          />
+        <div className="sideBySide">
+          <div id="pairingsSection" className="column">
+            <Pairings round={tournamentData.currentRound} pairings={[]} />
+          </div>
+          <div id="standingsSection" className="column">
+            <Standings
+              standings={tournamentData.participants}
+              round={tournamentData.currentRound}
+            />
+          </div>
         </div>
       </main>
     </div>

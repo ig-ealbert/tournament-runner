@@ -38,3 +38,27 @@ body {
 table td, th {
   padding-right: 10px;
 }
+
+.sideBySide {
+  display: flex;
+}
+
+.column {
+  flex: 1;
+  padding: 10px;
+  min-width: 400px;
+}
+
+.topCenter {
+  align-self: center;
+}
+
+#newPlayerName {
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.tournamentName {
+  font-size: 26px;
+  margin-bottom: 5px;
+}
