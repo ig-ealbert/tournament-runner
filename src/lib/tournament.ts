@@ -43,12 +43,17 @@ export class Tournament {
     return player.wins * WIN_SCORE + player.ties;
   }
 
+  calculateMaxRounds() {
+    const numPlayers = this.tournament.participants.length;
+    this.tournament.rounds = Math.ceil(Math.sqrt(numPlayers));
+  }
+
   calculateStandings() {
     for (const player of this.tournament.participants) {
       player.score = this.calculatePlayerScore(player);
     }
     this.tournament.standings = this.tournament.participants.sort(
-      (a, b) => a.score - b.score
+      (a, b) => b.score - a.score
     );
     return this.tournament.standings;
   }
@@ -59,6 +64,10 @@ export class Tournament {
 
   getPlayers() {
     return this.tournament.participants;
+  }
+
+  getTournamentData() {
+    return this.tournament;
   }
 
   givePlayerWin(id: number) {
@@ -81,11 +90,37 @@ export class Tournament {
     return true;
   }
 
+  // TODO - cleanup
   makePairings() {
-    if (this.tournament.status !== tournamentStatus.IN_PROGRESS) {
-      this.tournament.status = tournamentStatus.IN_PROGRESS;
+    this.tournament.status = tournamentStatus.IN_PROGRESS;
+    if (this.tournament.currentRound === 0) {
+      this.calculateMaxRounds();
     }
-    // TODO
+    this.advanceToNextRound();
+    const pairings: participant[][] = [];
+    this.calculateStandings();
+    const playersToPair = this.tournament.standings.slice();
+    while (playersToPair.length > 0) {
+      if (playersToPair.length === 1) {
+        pairings.push(playersToPair);
+        break;
+      }
+      const playerAwaitingMatch = playersToPair.shift();
+      if (!playerAwaitingMatch) {
+        return; // This should never happen but TS
+      }
+      for (const [index, potentialPair] of playersToPair.entries()) {
+        if (!potentialPair.opponents.includes(playerAwaitingMatch.id)) {
+          pairings.push([playerAwaitingMatch, potentialPair]);
+          playersToPair.splice(index, 1);
+          break;
+        }
+        if (index === playersToPair.length - 1) {
+          throw new Error(`Unable to pair ${playerAwaitingMatch.name}`);
+        }
+      }
+    }
+    return pairings;
   }
 
   reportResult(player1: number, player2: number, outcome: result) {
@@ -98,6 +133,10 @@ export class Tournament {
     } else {
       this.givePlayersTie(player1, player2);
     }
+    const participant1 = this.getPlayerById(player1);
+    const participant2 = this.getPlayerById(player2);
+    participant1.opponents.push(player2);
+    participant2.opponents.push(player1);
     const resultLog = {
       player1,
       player2,

@@ -1,15 +1,17 @@
 import { pairingsProps } from "@/types/pairingsProps";
 import { participant } from "@/types/participant";
 import { result } from "@/types/result";
-import React from "react";
+import React, { useRef } from "react";
 
 export default function Pairings(props: pairingsProps) {
   const [isReportingResult, setIsReportingResult] =
     React.useState<boolean>(false);
   const [resultPlayers, setResultPlayers] = React.useState<participant[]>([]);
-  const [resultOutcome, setResultOutcome] = React.useState<string>(
-    result.IN_PROGRESS
-  );
+  const [resultOutcome, setResultOutcome] = React.useState<string>(result.WIN);
+  const [reportedMatches, setReportedMatches] = React.useState<number[]>([]);
+  React.useEffect(() => {
+    setReportedMatches([]);
+  }, [props]);
 
   function handleResultWinnerChange(
     event: React.ChangeEvent<HTMLSelectElement>
@@ -17,9 +19,12 @@ export default function Pairings(props: pairingsProps) {
     setResultOutcome(event.target.value);
   }
 
-  function openReportingModal(pair: participant[]) {
+  function openReportingModal(pair: participant[], index: number) {
     setResultPlayers(pair);
     setIsReportingResult(true);
+    const addReport = reportedMatches.slice();
+    addReport.push(index);
+    setReportedMatches(addReport);
   }
 
   async function reportResult() {
@@ -53,7 +58,10 @@ export default function Pairings(props: pairingsProps) {
               <td>{pair[0].name}</td>
               <td>{pair[1].name}</td>
               <td>
-                <button onClick={() => openReportingModal(pair)}>
+                <button
+                  onClick={() => openReportingModal(pair, index)}
+                  disabled={reportedMatches.includes(index)}
+                >
                   Report Result
                 </button>
               </td>
@@ -62,7 +70,7 @@ export default function Pairings(props: pairingsProps) {
         </tbody>
       </table>
       {isReportingResult && (
-        <dialog>
+        <div id="reportDialog">
           Select Winner:
           <select value={resultOutcome} onChange={handleResultWinnerChange}>
             <option value={result.WIN}>{resultPlayers[0].name}</option>
@@ -70,7 +78,7 @@ export default function Pairings(props: pairingsProps) {
             <option value={result.TIE}>Tie</option>
           </select>
           <button onClick={reportResult}>Report Result</button>
-        </dialog>
+        </div>
       )}
     </div>
   );

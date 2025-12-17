@@ -25,6 +25,8 @@ export default function Home() {
 
   const [addPlayerValue, setAddPlayerValue] = useState<string>("");
 
+  const [pairings, setPairings] = useState<participant[][]>([]);
+
   async function addPlayer() {
     try {
       const returnValue = await fetch("/api/players/add", {
@@ -50,6 +52,27 @@ export default function Home() {
     }
   }
 
+  async function makePairings() {
+    try {
+      const returnValue = await fetch("/api/pairings/create");
+      const newPairings = await returnValue.json();
+      setPairings(newPairings);
+      updateTournamentData();
+    } catch (e) {
+      console.log(`Unable to create pairings.  ${e}`);
+    }
+  }
+
+  async function updateTournamentData() {
+    try {
+      const returnValue = await fetch("/api/tournament/get");
+      const data = await returnValue.json();
+      setTournamentData(data);
+    } catch (e) {
+      console.log(`Unable to fetch tournament data. ${e}`);
+    }
+  }
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
@@ -70,13 +93,18 @@ export default function Home() {
             ></input>
             <button onClick={addPlayer}>Add Player</button>
           </div>
-          <button>
-            Create Pairings (Round {tournamentData.currentRound + 1})
-          </button>
+          {tournamentData.status !== tournamentStatus.COMPLETE && (
+            <button onClick={makePairings}>
+              Create Pairings (Round {tournamentData.currentRound + 1})
+            </button>
+          )}
+          {tournamentData.status === tournamentStatus.COMPLETE && (
+            <button onClick={updateTournamentData}>Get Final Standings</button>
+          )}
         </div>
         <div className="sideBySide">
           <div id="pairingsSection" className="column">
-            <Pairings round={tournamentData.currentRound} pairings={[]} />
+            <Pairings round={tournamentData.currentRound} pairings={pairings} />
           </div>
           <div id="standingsSection" className="column">
             <Standings
