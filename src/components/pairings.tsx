@@ -1,16 +1,21 @@
 import { pairingsProps } from "@/types/pairingsProps";
 import { participant } from "@/types/participant";
 import { result } from "@/types/result";
-import React, { useRef } from "react";
+import React from "react";
 
 export default function Pairings(props: pairingsProps) {
   const [isReportingResult, setIsReportingResult] =
     React.useState<boolean>(false);
   const [resultPlayers, setResultPlayers] = React.useState<participant[]>([]);
   const [resultOutcome, setResultOutcome] = React.useState<string>(result.WIN);
-  const [reportedMatches, setReportedMatches] = React.useState<number[]>([]);
+  const [reportedPlayers, setReportedPlayers] = React.useState<number[]>([]);
   React.useEffect(() => {
-    setReportedMatches([]);
+    const playerWithBye = props.pairings.filter((pair) => pair.length === 1);
+    if (playerWithBye.length > 0) {
+      setReportedPlayers([playerWithBye[0][0].id]);
+    } else {
+      setReportedPlayers([]);
+    }
   }, [props]);
 
   function handleResultWinnerChange(
@@ -19,12 +24,9 @@ export default function Pairings(props: pairingsProps) {
     setResultOutcome(event.target.value);
   }
 
-  function openReportingModal(pair: participant[], index: number) {
+  function openReportingModal(pair: participant[]) {
     setResultPlayers(pair);
     setIsReportingResult(true);
-    const addReport = reportedMatches.slice();
-    addReport.push(index);
-    setReportedMatches(addReport);
   }
 
   async function reportResult() {
@@ -39,6 +41,10 @@ export default function Pairings(props: pairingsProps) {
         outcome: resultOutcome,
       }),
     });
+    const addReport = reportedPlayers.slice();
+    addReport.push(resultPlayers[0].id);
+    addReport.push(resultPlayers[1].id);
+    setReportedPlayers(addReport);
     setIsReportingResult(false);
   }
 
@@ -56,11 +62,11 @@ export default function Pairings(props: pairingsProps) {
           {props.pairings.map((pair, index) => (
             <tr key={`pairingsRow${index}`}>
               <td>{pair[0].name}</td>
-              <td>{pair[1].name}</td>
+              <td>{pair[1] ? pair[1].name : "Bye"}</td>
               <td>
                 <button
-                  onClick={() => openReportingModal(pair, index)}
-                  disabled={reportedMatches.includes(index)}
+                  onClick={() => openReportingModal(pair)}
+                  disabled={reportedPlayers.includes(pair[0].id)}
                 >
                   Report Result
                 </button>

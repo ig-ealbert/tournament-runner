@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Standings from "../components/standings";
 import styles from "./page.module.css";
-import { participant } from "@/types/participant"; // will likely need in the future
+import { participant } from "@/types/participant";
 import { tournament } from "@/types/tournament";
 import { tournamentStatus } from "@/types/tournamentStatus";
 import Pairings from "@/components/pairings";
@@ -47,8 +47,9 @@ export default function Home() {
         participants: newPlayerList,
         standings: newStandings,
       });
+      setAddPlayerValue("");
     } catch (e) {
-      console.log(`Unable to add player.  ${e}`);
+      throw new Error(`Unable to add player.  ${e}`);
     }
   }
 
@@ -59,7 +60,7 @@ export default function Home() {
       setPairings(newPairings);
       updateTournamentData();
     } catch (e) {
-      console.log(`Unable to create pairings.  ${e}`);
+      throw new Error(`Unable to create pairings.  ${e}`);
     }
   }
 
@@ -69,7 +70,7 @@ export default function Home() {
       const data = await returnValue.json();
       setTournamentData(data);
     } catch (e) {
-      console.log(`Unable to fetch tournament data. ${e}`);
+      throw new Error(`Unable to fetch tournament data. ${e}`);
     }
   }
 
@@ -93,14 +94,18 @@ export default function Home() {
             ></input>
             <button onClick={addPlayer}>Add Player</button>
           </div>
-          {tournamentData.status !== tournamentStatus.COMPLETE && (
+          {(tournamentData.currentRound === 0 ||
+            tournamentData.currentRound < tournamentData.rounds) && (
             <button onClick={makePairings}>
               Create Pairings (Round {tournamentData.currentRound + 1})
             </button>
           )}
-          {tournamentData.status === tournamentStatus.COMPLETE && (
-            <button onClick={updateTournamentData}>Get Final Standings</button>
-          )}
+          {tournamentData.currentRound !== 0 &&
+            tournamentData.currentRound === tournamentData.rounds && (
+              <button onClick={updateTournamentData}>
+                Get Final Standings
+              </button>
+            )}
         </div>
         <div className="sideBySide">
           <div id="pairingsSection" className="column">

@@ -31,11 +31,21 @@ export class Tournament {
     return playerInfo;
   }
 
+  addResultToLog(player1: number, player2: number, outcome: result) {
+    const resultLog = {
+      player1,
+      player2,
+      round: this.tournament.currentRound,
+      result: outcome,
+      tournamentId: this.tournament.id,
+    };
+    this.tournament.results.push(resultLog);
+    return resultLog;
+  }
+
   advanceToNextRound() {
     if (this.tournament.currentRound + 1 <= this.tournament.rounds) {
       this.tournament.currentRound++;
-    } else {
-      this.tournament.status = tournamentStatus.COMPLETE;
     }
   }
 
@@ -45,7 +55,7 @@ export class Tournament {
 
   calculateMaxRounds() {
     const numPlayers = this.tournament.participants.length;
-    this.tournament.rounds = Math.ceil(Math.sqrt(numPlayers));
+    this.tournament.rounds = Math.ceil(Math.log2(numPlayers));
   }
 
   calculateStandings() {
@@ -58,6 +68,14 @@ export class Tournament {
     return this.tournament.standings;
   }
 
+  ensureTournamentStarted() {
+    this.tournament.status = tournamentStatus.IN_PROGRESS;
+    if (this.tournament.currentRound === 0) {
+      this.calculateMaxRounds();
+    }
+    this.advanceToNextRound();
+  }
+
   getPlayerById(id: number) {
     return this.tournament.participants.filter((player) => player.id === id)[0];
   }
@@ -67,7 +85,18 @@ export class Tournament {
   }
 
   getTournamentData() {
+    if (
+      this.tournament.currentRound !== 0 &&
+      this.tournament.currentRound === this.tournament.rounds
+    ) {
+      this.tournament.status = tournamentStatus.COMPLETE;
+    }
     return this.tournament;
+  }
+
+  givePlayerBye(id: number) {
+    this.givePlayerWin(id);
+    this.addResultToLog(id, -1, result.WIN);
   }
 
   givePlayerWin(id: number) {
@@ -90,18 +119,14 @@ export class Tournament {
     return true;
   }
 
-  // TODO - cleanup
   makePairings() {
-    this.tournament.status = tournamentStatus.IN_PROGRESS;
-    if (this.tournament.currentRound === 0) {
-      this.calculateMaxRounds();
-    }
-    this.advanceToNextRound();
+    this.ensureTournamentStarted();
     const pairings: participant[][] = [];
     this.calculateStandings();
     const playersToPair = this.tournament.standings.slice();
     while (playersToPair.length > 0) {
       if (playersToPair.length === 1) {
+        this.givePlayerBye(playersToPair[0].id);
         pairings.push(playersToPair);
         break;
       }
@@ -137,14 +162,7 @@ export class Tournament {
     const participant2 = this.getPlayerById(player2);
     participant1.opponents.push(player2);
     participant2.opponents.push(player1);
-    const resultLog = {
-      player1,
-      player2,
-      round: this.tournament.currentRound,
-      result: outcome,
-      tournamentId: this.tournament.id,
-    };
-    this.tournament.results.push(resultLog);
+    this.addResultToLog(player1, player2, outcome);
     return outcome;
   }
 

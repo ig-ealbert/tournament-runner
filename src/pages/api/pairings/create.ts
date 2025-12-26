@@ -7,7 +7,6 @@ export default function handler(
   res: NextApiResponse<participant[][]>
 ) {
   const pairings = currentTournament.makePairings();
-  console.log(`pairings: ${JSON.stringify(pairings)}`);
   if (!pairings) {
     res.status(500).send([]);
   }
