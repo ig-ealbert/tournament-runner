@@ -56,9 +56,16 @@ export class Tournament {
   calculateMaxRounds() {
     const numPlayers = this.tournament.participants.length;
     this.tournament.rounds = Math.ceil(Math.log2(numPlayers));
+    return this.tournament.rounds;
   }
 
   calculateStandings() {
+    if (this.tournament.currentRound === 0) {
+      this.randomizePlayerOrder();
+      this.tournament.status = tournamentStatus.IN_PROGRESS;
+      this.calculateMaxRounds();
+    }
+    this.advanceToNextRound();
     for (const player of this.tournament.participants) {
       player.score = this.calculatePlayerScore(player);
     }
@@ -66,14 +73,6 @@ export class Tournament {
       (a, b) => b.score - a.score
     );
     return this.tournament.standings;
-  }
-
-  ensureTournamentStarted() {
-    this.tournament.status = tournamentStatus.IN_PROGRESS;
-    if (this.tournament.currentRound === 0) {
-      this.calculateMaxRounds();
-    }
-    this.advanceToNextRound();
   }
 
   getPlayerById(id: number) {
@@ -120,7 +119,6 @@ export class Tournament {
   }
 
   makePairings() {
-    this.ensureTournamentStarted();
     const pairings: participant[][] = [];
     this.calculateStandings();
     const playersToPair = this.tournament.standings.slice();
@@ -141,11 +139,28 @@ export class Tournament {
           break;
         }
         if (index === playersToPair.length - 1) {
-          throw new Error(`Unable to pair ${playerAwaitingMatch.name}`);
+          // throw new Error(`Unable to pair ${playerAwaitingMatch.name}`);
+          pairings.push([playerAwaitingMatch, potentialPair]);
+          playersToPair.splice(index, 1);
+          break;
         }
       }
     }
     return pairings;
+  }
+
+  randomizePlayerOrder() {
+    const playersToRandomize = this.tournament.participants.slice();
+    const randomOrder = [];
+    while (playersToRandomize.length > 0) {
+      const numPlayers = playersToRandomize.length;
+      const randomNumber = Math.floor(Math.random() * numPlayers);
+      const randomPlayer = playersToRandomize[randomNumber];
+      randomOrder.push(randomPlayer);
+      playersToRandomize.splice(randomNumber, 1);
+    }
+    this.tournament.participants = randomOrder;
+    return randomOrder;
   }
 
   reportResult(player1: number, player2: number, outcome: result) {
