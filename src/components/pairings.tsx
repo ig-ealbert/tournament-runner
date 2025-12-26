@@ -16,7 +16,7 @@ export default function Pairings(props: pairingsProps) {
     } else {
       setReportedPlayers([]);
     }
-  }, [props]);
+  }, [props.round]);
 
   function handleResultWinnerChange(
     event: React.ChangeEvent<HTMLSelectElement>
