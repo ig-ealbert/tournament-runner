@@ -8,7 +8,7 @@ Ever want to run a gaming or sports tournament but hated doing pairings and rank
 
 1. Create a tournament
 2. Add participants to the tournament
-3. Specify number of rounds or auto-select based on number of participants
+3. Auto-select number of rounds based on number of participants
 4. Decide matches based on ranking
 5. Display rankings
 6. Report match outcomes
