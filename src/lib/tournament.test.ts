@@ -194,4 +194,12 @@ describe("Tournament methods", () => {
     const name = tournament.setName("The Tournament");
     assert.strictEqual(name, "The Tournament");
   });
+
+  it("Starts round", () => {
+    const tournament = new Tournament();
+    tournament.addPlayer("Player 1");
+    tournament.addPlayer("Player 2");
+    const round = tournament.startRound();
+    assert.strictEqual(round, 1);
+  });
 });

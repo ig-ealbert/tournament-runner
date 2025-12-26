@@ -60,12 +60,6 @@ export class Tournament {
   }
 
   calculateStandings() {
-    if (this.tournament.currentRound === 0) {
-      this.randomizePlayerOrder();
-      this.tournament.status = tournamentStatus.IN_PROGRESS;
-      this.calculateMaxRounds();
-    }
-    this.advanceToNextRound();
     for (const player of this.tournament.participants) {
       player.score = this.calculatePlayerScore(player);
     }
@@ -120,6 +114,7 @@ export class Tournament {
 
   makePairings() {
     const pairings: participant[][] = [];
+    this.startRound();
     this.calculateStandings();
     const playersToPair = this.tournament.standings.slice();
     while (playersToPair.length > 0) {
@@ -184,5 +179,15 @@ export class Tournament {
   setName(name: string) {
     this.tournament.name = name;
     return name;
+  }
+
+  startRound() {
+    if (this.tournament.currentRound === 0) {
+      this.randomizePlayerOrder();
+      this.tournament.status = tournamentStatus.IN_PROGRESS;
+      this.calculateMaxRounds();
+    }
+    this.advanceToNextRound();
+    return this.tournament.currentRound;
   }
 }
