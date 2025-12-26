@@ -75,50 +75,55 @@ export default function Home() {
   }
 
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <div className="topCenter">
+    <>
+      <div className="topCenter">
+        <input
+          className="tournamentName"
+          value={tournamentData.name}
+          onChange={(event) =>
+            setTournamentData({ ...tournamentData, name: event.target.value })
+          }
+        ></input>
+        <div id="addPlayerSection">
           <input
-            className="tournamentName"
-            value={tournamentData.name}
-            onChange={(event) =>
-              setTournamentData({ ...tournamentData, name: event.target.value })
-            }
+            id="newPlayerName"
+            placeholder="Enter Player Name"
+            value={addPlayerValue}
+            onChange={(e) => setAddPlayerValue(e.target.value)}
           ></input>
-          <div id="addPlayerSection">
-            <input
-              id="newPlayerName"
-              placeholder="Enter Player Name"
-              value={addPlayerValue}
-              onChange={(e) => setAddPlayerValue(e.target.value)}
-            ></input>
-            <button onClick={addPlayer}>Add Player</button>
-          </div>
-          {(tournamentData.currentRound === 0 ||
-            tournamentData.currentRound < tournamentData.rounds) && (
+          <button onClick={addPlayer}>Add Player</button>
+        </div>
+        {(tournamentData.currentRound === 0 ||
+          tournamentData.currentRound < tournamentData.rounds) && (
+          <div>
             <button onClick={makePairings}>
               Create Pairings (Round {tournamentData.currentRound + 1})
             </button>
+          </div>
+        )}
+        {tournamentData.currentRound !== 0 &&
+          tournamentData.currentRound === tournamentData.rounds && (
+            <button onClick={updateTournamentData}>Get Final Standings</button>
           )}
-          {tournamentData.currentRound !== 0 &&
-            tournamentData.currentRound === tournamentData.rounds && (
-              <button onClick={updateTournamentData}>
-                Get Final Standings
-              </button>
-            )}
-        </div>
-        <div className="sideBySide">
-          <div id="pairingsSection" className="column">
-            <Pairings round={tournamentData.currentRound} pairings={pairings} />
+      </div>
+      <div className={styles.page}>
+        <main className={styles.main}>
+          <div className="sideBySide">
+            <div id="pairingsSection" className="column">
+              <Pairings
+                round={tournamentData.currentRound}
+                pairings={pairings}
+              />
+            </div>
+            <div id="standingsSection" className="column">
+              <Standings
+                standings={tournamentData.participants}
+                round={tournamentData.currentRound}
+              />
+            </div>
           </div>
-          <div id="standingsSection" className="column">
-            <Standings
-              standings={tournamentData.participants}
-              round={tournamentData.currentRound}
-            />
-          </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 }
