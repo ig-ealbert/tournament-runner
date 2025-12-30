@@ -63,3 +63,16 @@ table td, th {
   font-size: 26px;
   margin-bottom: 5px;
 }
+
+#reportDialog {
+  margin-top: 10px;
+}
+
+#reportDialog button {
+  margin-left: 5px;
+}
+
+#reportDialog select {
+  margin-left: 5px;
+  padding-left: 5px;
+}
