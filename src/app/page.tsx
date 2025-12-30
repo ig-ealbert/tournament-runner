@@ -95,10 +95,11 @@ export default function Home() {
         </div>
         {(tournamentData.currentRound === 0 ||
           tournamentData.currentRound < tournamentData.rounds) && (
-          <div>
+          <div id="makePairingsAndUpdateStandings">
             <button onClick={makePairings}>
               Create Pairings (Round {tournamentData.currentRound + 1})
             </button>
+            <button onClick={updateTournamentData}>Update Standings</button>
           </div>
         )}
         {tournamentData.currentRound !== 0 &&
